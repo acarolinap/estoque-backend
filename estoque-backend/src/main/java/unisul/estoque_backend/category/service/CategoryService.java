@@ -1,5 +1,6 @@
 package unisul.estoque_backend.category.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,16 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public Category find(Long id) {
 		return repository.findById(id);
+	}
+	
+	public List<Category.Size> getSizes(){
+		List<Category.Size> list = Arrays.asList(Category.Size.values());
+		return list;
+	}
+	
+	public List<Category.Packaging> getPackaging(){
+		List<Category.Packaging> list = Arrays.asList(Category.Packaging.values());
+		return list;
 	}
 	
 	@Transactional

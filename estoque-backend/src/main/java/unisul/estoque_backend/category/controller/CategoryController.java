@@ -59,6 +59,20 @@ public class CategoryController {
 		return ResponseEntity.ok(found);
 	}
 	
+	@GetMapping("/tamanhos")
+	public HttpEntity<Object> getSizes(){
+		List<Category.Size> list = service.getSizes();
+		
+		return ResponseEntity.ok(list);
+	}
+	
+	@GetMapping("/embalagens")
+	public HttpEntity<Object> getPackaging(){
+		List<Category.Packaging> list = service.getPackaging();
+		
+		return ResponseEntity.ok(list);
+	}
+	
 	@PutMapping
 	@ResponseBody
 	public HttpEntity<Object> update(@RequestParam Long id, @RequestBody CategoryInput input) {

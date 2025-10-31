@@ -6,7 +6,7 @@ public class Category {
 		SMALL, MEDIUM, LARGE
 	}
 	public enum Packaging {
-		TIN, GLASS, PLASTIC
+		PAPER, CARDBOARD, PLASTIC, TIN, GLASS, WOOD, CLOTH
 	}
 
 	private Long id;
