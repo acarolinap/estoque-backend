@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import unisul.estoque_backend.category.controller.representation.CategoryInput;
+import unisul.estoque_backend.category.controller.representation.CategoryRepresentation;
 import unisul.estoque_backend.category.domain.Category;
 import unisul.estoque_backend.category.domain.builder.CategoryBuilder;
 import unisul.estoque_backend.category.service.CategoryService;
@@ -30,7 +30,7 @@ public class CategoryController {
 	
 	@PostMapping
 	@ResponseBody
-	public HttpEntity<Object> create(@RequestBody CategoryInput category){
+	public HttpEntity<Object> create(@RequestBody CategoryRepresentation category){
 		
 		Category saved = service.create(new CategoryBuilder()
 				.name(category.getName())
@@ -75,7 +75,7 @@ public class CategoryController {
 	
 	@PutMapping
 	@ResponseBody
-	public HttpEntity<Object> update(@RequestParam Long id, @RequestBody CategoryInput input) {
+	public HttpEntity<Object> update(@RequestParam Long id, @RequestBody CategoryRepresentation input) {
 		
 		Category category = new CategoryBuilder()
 				.id(id)

@@ -2,12 +2,19 @@ package unisul.estoque_backend.category.controller.representation;
 
 import unisul.estoque_backend.category.domain.Category;
 
-public class CategoryInput {
+public class CategoryRepresentation {
 
+	private Long id;
 	private String name;
 	private Category.Size size;
 	private Category.Packaging packaging;
 	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
