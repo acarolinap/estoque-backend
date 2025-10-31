@@ -1,8 +1,5 @@
 package unisul.estoque_backend.category.domain;
 
-import jakarta.persistence.*;
-
-@Entity
 public class Category {
 
 	public enum Size {
@@ -11,14 +8,10 @@ public class Category {
 	public enum Packaging {
 		TIN, GLASS, PLASTIC
 	}
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
 	private Long id;
 	private String name;
-	@Enumerated
 	private Size size;
-	@Enumerated
 	private Packaging packaging;
 	
 	public Category() {
