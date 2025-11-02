@@ -2,7 +2,7 @@ package unisul.estoque_backend.category.controller.representation;
 
 import unisul.estoque_backend.category.domain.Category;
 
-public class CategoryRepresentation {
+public class CategoryInput {
 
 	private Long id;
 	private String name;

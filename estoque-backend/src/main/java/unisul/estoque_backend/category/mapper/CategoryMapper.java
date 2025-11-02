@@ -1,11 +1,13 @@
 package unisul.estoque_backend.category.mapper;
 
-import unisul.estoque_backend.category.controller.representation.CategoryRepresentation;
+import unisul.estoque_backend.category.controller.representation.CategoryInput;
+import unisul.estoque_backend.category.controller.representation.CategoryOutput;
 import unisul.estoque_backend.category.domain.Category;
 import unisul.estoque_backend.category.repository.entity.CategoryEntity;
 
 public class CategoryMapper {
 
+	// Domain to Entity
 	public static CategoryEntity toEntity(Category domain) {
 		CategoryEntity entity = new CategoryEntity();
 		
@@ -17,6 +19,7 @@ public class CategoryMapper {
 		return entity;
 	}
 	
+	// Entity to Domain
 	public static Category toDomain(CategoryEntity entity) {
 		Category domain = new Category();
 		
@@ -28,25 +31,31 @@ public class CategoryMapper {
 		return domain;
 	}
 	
-	public static Category toDomain(CategoryRepresentation representation) {
+	// Representation to Domain
+	public static Category toDomain(CategoryInput input) {
 		Category domain = new Category();
 		
-		domain.setId(representation.getId());
-		domain.setName(representation.getName());
-		domain.setSize(representation.getSize());
-		domain.setPackaging(representation.getPackaging());
+		domain.setId(input.getId());
+		domain.setName(input.getName());
+		domain.setSize(input.getSize());
+		domain.setPackaging(input.getPackaging());
 		
 		return domain;
 	}
 	
-	public static CategoryRepresentation toRepresentation(Category domain) {
-		CategoryRepresentation representation = new CategoryRepresentation();
+	// Domain to Representation
+	public static CategoryOutput toRepresentation(Category domain) {
+		CategoryOutput output = new CategoryOutput();
 		
-		representation.setId(domain.getId());
-		representation.setName(domain.getName());
-		representation.setSize(domain.getSize());
-		representation.setPackaging(domain.getPackaging());
+		output.setId(domain.getId());
+		output.setName(domain.getName());
+		output.setSize(
+				CategoryEnumMapper.toRepresentation( domain.getSize() )
+				);
+		output.setPackaging(
+				CategoryEnumMapper.toRepresentation(domain.getPackaging())
+				);
 		
-		return representation;
+		return output;
 	}
 }

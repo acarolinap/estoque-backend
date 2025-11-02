@@ -3,10 +3,30 @@ package unisul.estoque_backend.category.domain;
 public class Category {
 
 	public enum Size {
-		SMALL, MEDIUM, LARGE
+		SMALL("Pequeno"), MEDIUM("Médio"), LARGE("Grande");
+		
+		private final String friendlyName;
+
+		Size(String friendlyName) {
+			this.friendlyName = friendlyName;
+		}
+		
+		public String getFriendlyName() {
+			return this.friendlyName;
+		}
 	}
 	public enum Packaging {
-		PAPER, CARDBOARD, PLASTIC, TIN, GLASS, WOOD, CLOTH
+		PAPER("Papel"), CARDBOARD("Papelão"), PLASTIC("Plástico"), TIN("Lata"), GLASS("Vidro"), WOOD("Madeira"), CLOTH("Tecido");
+		
+		private final String friendlyName;
+
+		Packaging(String friendlyName) {
+			this.friendlyName = friendlyName;
+		}
+		
+		public String getFriendlyName() {
+			return this.friendlyName;
+		}
 	}
 
 	private Long id;

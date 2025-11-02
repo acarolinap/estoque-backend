@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import unisul.estoque_backend.category.controller.representation.CategoryRepresentation;
+import unisul.estoque_backend.category.controller.representation.CategoryInput;
+import unisul.estoque_backend.category.controller.representation.CategoryOutput;
+import unisul.estoque_backend.category.controller.representation.EnumRepresentation;
 import unisul.estoque_backend.category.domain.Category;
 import unisul.estoque_backend.category.domain.builder.CategoryBuilder;
+import unisul.estoque_backend.category.mapper.CategoryEnumMapper;
+import unisul.estoque_backend.category.mapper.CategoryMapper;
 import unisul.estoque_backend.category.service.CategoryService;
 
 @RestController
@@ -30,15 +34,13 @@ public class CategoryController {
 	
 	@PostMapping
 	@ResponseBody
-	public HttpEntity<Object> create(@RequestBody CategoryRepresentation category){
+	public HttpEntity<Object> create(@RequestBody CategoryInput input){
 		
-		Category saved = service.create(new CategoryBuilder()
-				.name(category.getName())
-				.size(category.getSize())
-				.packaging(category.getPackaging())
-				.build());
+		Category domain = CategoryMapper.toDomain(input);
+		Category saved = service.create(domain);
+		CategoryOutput output = CategoryMapper.toRepresentation(saved);
 		
-		return ResponseEntity.ok(saved);
+		return ResponseEntity.ok(output);
 	}
 	
 	@GetMapping
@@ -47,7 +49,10 @@ public class CategoryController {
 		
 		List<Category> found = service.findAll();
 		
-		return ResponseEntity.ok(found);
+		List<CategoryOutput> output = found.stream()
+				.map(CategoryMapper::toRepresentation).toList();
+		
+		return ResponseEntity.ok(output);
 	}
 	
 	@GetMapping("/{id}")
@@ -55,34 +60,36 @@ public class CategoryController {
 	public HttpEntity<Object> get(@PathVariable Long id){
 		
 		Category found = service.find(id);
+		CategoryOutput output = CategoryMapper.toRepresentation(found);
 		
-		return ResponseEntity.ok(found);
+		return ResponseEntity.ok(output);
 	}
 	
 	@GetMapping("/tamanhos")
 	public HttpEntity<Object> getSizes(){
 		List<Category.Size> list = service.getSizes();
+		List<EnumRepresentation> output = list.stream()
+				.map(CategoryEnumMapper::toRepresentation).toList();
 		
-		return ResponseEntity.ok(list);
+		return ResponseEntity.ok(output);
 	}
 	
 	@GetMapping("/embalagens")
 	public HttpEntity<Object> getPackaging(){
 		List<Category.Packaging> list = service.getPackaging();
+		List<EnumRepresentation> output = list.stream()
+				.map(CategoryEnumMapper::toRepresentation).toList();
 		
-		return ResponseEntity.ok(list);
+		return ResponseEntity.ok(output);
 	}
 	
 	@PutMapping
 	@ResponseBody
-	public HttpEntity<Object> update(@RequestParam Long id, @RequestBody CategoryRepresentation input) {
+	public HttpEntity<Object> update(@RequestParam Long id, @RequestBody CategoryInput input) {
 		
-		Category category = new CategoryBuilder()
-				.id(id)
-				.name(input.getName())
-				.size(input.getSize())
-				.packaging(input.getPackaging())
-				.build();
+		input.setId(id);
+		
+		Category category = CategoryMapper.toDomain(input);
 		
 		Category updated = service.update(category);
 		

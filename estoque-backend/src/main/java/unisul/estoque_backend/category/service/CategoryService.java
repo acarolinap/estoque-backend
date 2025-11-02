@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import unisul.estoque_backend.category.domain.Category;
 import unisul.estoque_backend.category.repository.CategoryRepository;
 
