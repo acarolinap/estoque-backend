@@ -89,10 +89,10 @@ public class CategoryController {
 		input.setId(id);
 		
 		Category category = CategoryMapper.toDomain(input);
-		
 		Category updated = service.update(category);
+		CategoryOutput output = CategoryMapper.toRepresentation(updated);
 		
-		return ResponseEntity.ok(updated);
+		return ResponseEntity.ok(output);
 	}
 	
 	@DeleteMapping

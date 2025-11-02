@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 
 application.properties
+DeveloperControls.java
 
 ### STS ###
 .apt_generated
