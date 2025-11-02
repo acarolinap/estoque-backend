@@ -1,3 +1,6 @@
+# Prevent commiting of local database passwords
+application.properties
+
 # Compiled class files
 *.class
 
