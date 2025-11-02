@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import jakarta.persistence.EntityNotFoundException;
 import unisul.estoque_backend.category.domain.Category;
+import unisul.estoque_backend.category.exception.CategoryNotFoundException;
 import unisul.estoque_backend.category.mapper.CategoryMapper;
 import unisul.estoque_backend.category.repository.entity.CategoryEntity;
 import unisul.estoque_backend.category.repository.jpa.CategoryRepositoryJpa;
@@ -39,7 +39,7 @@ public class CategoryRepository {
 
 	public Category findById(Long id) {
 		CategoryEntity categoryEntity = jpa.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + id));
+				.orElseThrow(() -> new CategoryNotFoundException(id));
 		
 		Category category = CategoryMapper.toDomain(categoryEntity);
 		return category;
