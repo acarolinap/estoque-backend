@@ -20,7 +20,6 @@ import unisul.estoque_backend.category.controller.representation.CategoryInput;
 import unisul.estoque_backend.category.controller.representation.CategoryOutput;
 import unisul.estoque_backend.category.controller.representation.EnumRepresentation;
 import unisul.estoque_backend.category.domain.Category;
-import unisul.estoque_backend.category.domain.builder.CategoryBuilder;
 import unisul.estoque_backend.category.mapper.CategoryEnumMapper;
 import unisul.estoque_backend.category.mapper.CategoryMapper;
 import unisul.estoque_backend.category.service.CategoryService;
