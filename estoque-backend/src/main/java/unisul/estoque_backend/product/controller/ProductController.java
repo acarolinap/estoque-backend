@@ -1,7 +1,9 @@
 package unisul.estoque_backend.product.controller;
 
 import java.util.List;
+
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -57,9 +59,13 @@ public class ProductController {
 			
 			return ResponseEntity.ok(output);
 			
-		// Filter by low quantity
+		// Filter by low quantity (AQUI ESTÁ A MUDANÇA!)
 		} else if (lowQuantity) {
-			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+			List<Product> list = service.findByLowQuantity();
+			List<ProductOutput> output = list.stream()
+					.map(ProductMapper::toRepresentation).toList();
+			
+			return ResponseEntity.ok(output);
 			
 		// No filters - return all
 		} else {
@@ -82,9 +88,9 @@ public class ProductController {
 	
 	@PutMapping
 	public HttpEntity<Object> update(
-        @RequestParam Long id, 
-        @RequestBody @Valid ProductInput input
-        ) {
+			@RequestParam Long id, 
+			@RequestBody @Valid ProductInput input
+			) {
 		
 		input.setId(id);
 		Product domain = ProductMapper.toDomain(input);

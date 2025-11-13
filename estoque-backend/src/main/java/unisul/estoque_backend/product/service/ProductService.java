@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unisul.estoque_backend.category.repository.CategoryRepository; 
+import unisul.estoque_backend.category.repository.entity.CategoryEntity;
+import unisul.estoque_backend.category.exception.CategoryNotFoundException; 
 import unisul.estoque_backend.product.domain.Product;
 import unisul.estoque_backend.product.repository.ProductRepository;
 
@@ -15,9 +18,16 @@ public class ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
+    @Autowired
+    private CategoryRepository categoryRepository; 
+	
 	@Transactional
 	public Product create(Product product) {
-		product = repository.save(product);
+        Long categoryId = product.getCategoryId();
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+
+		product = repository.save(product, category);
 		return product;
 	}
 	
@@ -31,9 +41,28 @@ public class ProductService {
 		return repository.findById(id);
 	}
 	
+	@Transactional(readOnly = true)
+	public List<Product> findByCategoryId(Long id){
+		return repository.findByCategoryId(id);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> findByCategoryId(Long id){
+		return repository.findByCategoryId(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Product> findByLowQuantity(){
+		return repository.findByLowQuantity();
+	}
+	
 	@Transactional
 	public Product update(Product product) {
-		return repository.save(product);
+        Long categoryId = product.getCategoryId();
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+                
+		return repository.save(product, category);
 	}
 	
 	@Transactional

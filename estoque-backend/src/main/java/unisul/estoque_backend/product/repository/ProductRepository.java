@@ -59,5 +59,20 @@ public class ProductRepository {
 	public void deleteById(Long id) {
 		
 		jpa.deleteById(id);
+
+	public List<Product> findByCategoryId(Long id) {
+		List<ProductEntity> found = jpa.findByCategoryId(id);
+		List<Product> list = found.stream()
+				.map(ProductMapper::toDomain).toList();
+		
+		return list;
+	}
+	
+		public List<Product> findByLowQuantity(){
+		List<ProductEntity> found = jpa.findByLowQuantity();
+		List<Product> list = found.stream()
+				.map(ProductMapper::toDomain).toList();
+		
+		return list;
 	}
 }
