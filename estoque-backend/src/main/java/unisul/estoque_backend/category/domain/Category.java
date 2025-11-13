@@ -37,6 +37,13 @@ public class Category {
 	public Category() {
 	}
 	
+	public Category(Long id, String name, Size size, Packaging packaging) {
+		this.setId(id);
+		this.setName(name);
+		this.setSize(size);
+		this.setPackaging(packaging);
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -50,7 +57,10 @@ public class Category {
 	}
 	
 	public void setName(String name) {
-		this.name = name;
+		if (name == null || name.trim().isEmpty()) {
+			throw new IllegalArgumentException("O nome da categoria não pode ser nulo ou vazio");
+		}
+		this.name = name.trim();
 	}
 	
 	public Size getSize() {
@@ -58,6 +68,9 @@ public class Category {
 	}
 	
 	public void setSize(Size size) {
+		if (size == null) {
+			throw new IllegalArgumentException("O tamanho da categoria não pode ser nulo");
+		}
 		this.size = size;
 	}
 	
@@ -66,6 +79,9 @@ public class Category {
 	}
 	
 	public void setPackaging(Packaging packaging) {
+		if (packaging == null) {
+			throw new IllegalArgumentException("A embalagem da categoria não pode ser nula");
+		}
 		this.packaging = packaging;
 	}
 }
