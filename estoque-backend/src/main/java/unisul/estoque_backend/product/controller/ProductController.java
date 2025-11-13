@@ -30,7 +30,7 @@ public class ProductController {
 	private ProductService service;
 
 	@PostMapping
-	public HttpEntity<Object> create(@RequestBody ProductInput input) {
+	public HttpEntity<Object> create(@RequestBody @Valid ProductInput input) {
 		Product domain = ProductMapper.toDomain(input);
 		domain = service.create(domain);
 		
@@ -82,9 +82,9 @@ public class ProductController {
 	
 	@PutMapping
 	public HttpEntity<Object> update(
-			@RequestParam Long id, 
-			@RequestBody ProductInput input
-			) {
+        @RequestParam Long id, 
+        @RequestBody @Valid ProductInput input
+        ) {
 		
 		input.setId(id);
 		Product domain = ProductMapper.toDomain(input);
