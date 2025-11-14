@@ -10,6 +10,7 @@ import unisul.estoque_backend.category.repository.CategoryRepository;
 import unisul.estoque_backend.category.repository.entity.CategoryEntity;
 import unisul.estoque_backend.category.exception.CategoryNotFoundException; 
 import unisul.estoque_backend.product.domain.Product;
+import unisul.estoque_backend.product.exception.ProductNotFoundException;
 import unisul.estoque_backend.product.repository.ProductRepository;
 
 @Service
@@ -18,16 +19,25 @@ public class ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
-    @Autowired
-    private CategoryRepository categoryRepository; 
+	@Autowired
+	private CategoryService categoryService;
 	
 	@Transactional
 	public Product create(Product product) {
-        Long categoryId = product.getCategoryId();
-        CategoryEntity category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-
-		product = repository.save(product, category);
+		if (product == null) {
+			throw new IllegalArgumentException("O produto não pode ser nulo");
+		}
+		
+		// Valida se a categoria existe antes de criar o produto
+		if (product.getCategoryId() != null) {
+			try {
+				categoryService.find(product.getCategoryId());
+			} catch (CategoryNotFoundException e) {
+				throw new CategoryNotFoundException(product.getCategoryId());
+			}
+		}
+		
+		product = repository.save(product);
 		return product;
 	}
 	
@@ -38,7 +48,14 @@ public class ProductService {
 	
 	@Transactional(readOnly = true)
 	public Product find(Long id) {
-		return repository.findById(id);
+		if (id == null || id <= 0) {
+			throw new IllegalArgumentException("O ID do produto deve ser um número positivo");
+		}
+		try {
+			return repository.findById(id);
+		} catch (ProductNotFoundException e) {
+			throw new ProductNotFoundException(id);
+		}
 	}
 	
 	@Transactional(readOnly = true)
@@ -58,15 +75,37 @@ public class ProductService {
 	
 	@Transactional
 	public Product update(Product product) {
-        Long categoryId = product.getCategoryId();
-        CategoryEntity category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
-                
-		return repository.save(product, category);
+		if (product == null) {
+			throw new IllegalArgumentException("O produto não pode ser nulo");
+		}
+		if (product.getId() == null || product.getId() <= 0) {
+			throw new IllegalArgumentException("O ID do produto é obrigatório para atualização");
+		}
+		
+		// Valida se o produto existe antes de atualizar
+		find(product.getId());
+		
+		// Valida se a categoria existe antes de atualizar o produto
+		if (product.getCategoryId() != null) {
+			try {
+				categoryService.find(product.getCategoryId());
+			} catch (CategoryNotFoundException e) {
+				throw new CategoryNotFoundException(product.getCategoryId());
+			}
+		}
+		
+		return repository.save(product);
 	}
 	
 	@Transactional
 	public void delete(Long id) {
+		if (id == null || id <= 0) {
+			throw new IllegalArgumentException("O ID do produto deve ser um número positivo");
+		}
+		
+		// Valida se o produto existe antes de deletar
+		find(id);
+		
 		repository.deleteById(id);
 	}
 }

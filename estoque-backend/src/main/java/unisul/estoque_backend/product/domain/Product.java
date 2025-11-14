@@ -1,6 +1,7 @@
 package unisul.estoque_backend.product.domain;
 
 import unisul.estoque_backend.category.domain.Category;
+import unisul.estoque_backend.product.exception.InvalidStockException;
 
 public class Product {
 
@@ -18,6 +19,19 @@ public class Product {
 		this.quantity = 0;
 		this.minimumQuantity = 0;
 	}
+	
+	public Product(Long id, String name, Integer quantity, Integer minimumQuantity, 
+			Integer maximumQuantity, Integer price, String unit, Long categoryId) {
+		this.setId(id);
+		this.setName(name);
+		this.setQuantity(quantity);
+		this.setMinimumQuantity(minimumQuantity);
+		this.setMaximumQuantity(maximumQuantity);
+		this.setPrice(price);
+		this.setUnit(unit);
+		this.setCategoryId(categoryId);
+		validateStockLimits();
+	}
 
 	public Long getId() {
 		return id;
@@ -32,7 +46,10 @@ public class Product {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if (name == null || name.trim().isEmpty()) {
+			throw new IllegalArgumentException("O nome do produto não pode ser nulo ou vazio");
+		}
+		this.name = name.trim();
 	}
 
 	public Integer getQuantity() {
@@ -40,7 +57,14 @@ public class Product {
 	}
 
 	public void setQuantity(Integer quantity) {
+		if (quantity == null) {
+			throw new IllegalArgumentException("A quantidade não pode ser nula");
+		}
+		if (quantity < 0) {
+			throw new IllegalArgumentException("A quantidade não pode ser negativa");
+		}
 		this.quantity = quantity;
+		validateStockLimits();
 	}
 
 	public Integer getMinimumQuantity() {
@@ -48,7 +72,14 @@ public class Product {
 	}
 
 	public void setMinimumQuantity(Integer minimumQuantity) {
+		if (minimumQuantity == null) {
+			throw new IllegalArgumentException("A quantidade mínima não pode ser nula");
+		}
+		if (minimumQuantity < 0) {
+			throw new IllegalArgumentException("A quantidade mínima não pode ser negativa");
+		}
 		this.minimumQuantity = minimumQuantity;
+		validateStockLimits();
 	}
 
 	public Integer getMaximumQuantity() {
@@ -56,7 +87,12 @@ public class Product {
 	}
 
 	public void setMaximumQuantity(Integer maximumQuantity) {
+		// maximumQuantity pode ser null, mas se não for null, deve ser >= minimumQuantity
+		if (maximumQuantity != null && maximumQuantity < 0) {
+			throw new IllegalArgumentException("A quantidade máxima não pode ser negativa");
+		}
 		this.maximumQuantity = maximumQuantity;
+		validateStockLimits();
 	}
 
 	public Integer getPrice() {
@@ -64,6 +100,12 @@ public class Product {
 	}
 
 	public void setPrice(Integer price) {
+		if (price == null) {
+			throw new IllegalArgumentException("O preço não pode ser nulo");
+		}
+		if (price < 0) {
+			throw new IllegalArgumentException("O preço não pode ser negativo");
+		}
 		this.price = price;
 	}
 
@@ -72,7 +114,10 @@ public class Product {
 	}
 
 	public void setUnit(String unit) {
-		this.unit = unit;
+		if (unit == null || unit.trim().isEmpty()) {
+			throw new IllegalArgumentException("A unidade não pode ser nula ou vazia");
+		}
+		this.unit = unit.trim();
 	}
 
 	public Long getCategoryId() {
@@ -80,6 +125,26 @@ public class Product {
 	}
 
 	public void setCategoryId(Long categoryId) {
+		if (categoryId == null || categoryId <= 0) {
+			throw new IllegalArgumentException("O ID da categoria deve ser um número positivo");
+		}
 		this.categoryId = categoryId;
+	}
+	
+	private void validateStockLimits() {
+		// Só valida se todos os valores necessários estiverem definidos
+		if (minimumQuantity != null && maximumQuantity != null) {
+			if (maximumQuantity < minimumQuantity) {
+				throw new InvalidStockException("A quantidade máxima não pode ser menor que a quantidade mínima");
+			}
+		}
+		// Validações de quantidade vs limites só fazem sentido se os limites estiverem definidos
+		// e a quantidade também estiver definida
+		if (minimumQuantity != null && quantity != null && quantity < minimumQuantity) {
+			throw new InvalidStockException("A quantidade atual não pode ser menor que a quantidade mínima");
+		}
+		if (maximumQuantity != null && quantity != null && quantity > maximumQuantity) {
+			throw new InvalidStockException("A quantidade atual não pode ser maior que a quantidade máxima");
+		}
 	}
 }

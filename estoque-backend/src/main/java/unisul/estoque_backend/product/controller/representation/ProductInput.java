@@ -1,34 +1,38 @@
 package unisul.estoque_backend.product.controller.representation;
 
-	import jakarta.validation.constraints.NotEmpty;
-	import jakarta.validation.constraints.NotNull;
-	import jakarta.validation.constraints.Positive;
-	import jakarta.validation.constraints.PositiveOrZero;
-	import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
+@ValidStockLimits
 public class ProductInput {
-	
+
 	private Long id;
+	
+	@NotBlank(message = "O nome do produto é obrigatório")
 	private String name;
-		@NotNull(message = "O nome não pode ser nulo")
-    	@NotEmpty(message = "O nome não pode ser vazio")
-    	@Size(min = 3, message = "O nome deve ter no mínimo 3 caracteres")
+	
+	@NotNull(message = "A quantidade é obrigatória")
+	@Min(value = 0, message = "A quantidade não pode ser negativa")
 	private Integer quantity;
-		@NotNull(message = "A quantidade não pode ser nula")
-    	@PositiveOrZero(message = "A quantidade deve ser 0 ou maior")
+	
+	@NotNull(message = "A quantidade mínima é obrigatória")
+	@Min(value = 0, message = "A quantidade mínima não pode ser negativa")
 	private Integer minimumQuantity;
-		@NotNull(message = "A quantidade mínima não pode ser nula")
-    	@PositiveOrZero(message = "A quantidade mínima deve ser 0 ou maior")
+	
 	private Integer maximumQuantity;
-		@Positive(message = "A quantidade máxima deve ser um valor positivo")
+	
+	@NotNull(message = "O preço é obrigatório")
+	@Min(value = 0, message = "O preço não pode ser negativo")
 	private Integer price;
-		@NotNull(message = "O preço não pode ser nulo")
-   		@Positive(message = "O preço deve ser um valor positivo")
+	
+	@NotBlank(message = "A unidade é obrigatória")
 	private String unit;
-		@NotNull(message = "A unidade não pode ser nula")
-    	@NotEmpty(message = "A unidade não pode ser vazia")
+	
+	@NotNull(message = "O ID da categoria é obrigatório")
+	@Positive(message = "O ID da categoria deve ser um número positivo")
 	private Long categoryId;
-		@NotNull(message = "O ID da Categoria não pode ser nulo")
 	
 	public Long getId() {
 		return id;
