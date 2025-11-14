@@ -1,12 +1,20 @@
 package unisul.estoque_backend.category.controller.representation;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import unisul.estoque_backend.category.domain.Category;
 
 public class CategoryInput {
 
 	private Long id;
+	
+	@NotBlank(message = "O nome da categoria é obrigatório")
 	private String name;
+	
+	@NotNull(message = "O tamanho é obrigatório")
 	private Category.Size size;
+	
+	@NotNull(message = "A embalagem é obrigatória")
 	private Category.Packaging packaging;
 	
 	public Long getId() {

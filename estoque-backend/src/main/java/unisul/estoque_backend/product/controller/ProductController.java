@@ -2,8 +2,11 @@ package unisul.estoque_backend.product.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,20 +46,46 @@ public class ProductController {
 	}
 	
 	@GetMapping
-	@ResponseBody
-	public HttpEntity<Object> get() {
-		List<Product> found = service.findAll();
-		List<ProductOutput> output = found.stream()
-				.map(ProductMapper::toRepresentation).toList();
+	public HttpEntity<Object> getAll(
+			@RequestParam(required = false) Long categoryId,
+			@RequestParam(required = false, defaultValue = "false") boolean lowQuantity
+			) {
 		
-		return ResponseEntity.ok(output);
+		// Filter by category AND low quantity
+		if (categoryId != null && lowQuantity) {
+			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+		
+		// Filter by category
+		} else if (categoryId != null) {
+			List<Product> list = service.findByCategoryId(categoryId);
+			List<ProductOutput> output = list.stream()
+					.map(ProductMapper::toRepresentation).toList();
+			
+			return ResponseEntity.ok(output);
+			
+		// Filter by low quantity (AQUI ESTÁ A MUDANÇA!)
+		} else if (lowQuantity) {
+			List<Product> list = service.findByLowQuantity();
+			List<ProductOutput> output = list.stream()
+					.map(ProductMapper::toRepresentation).toList();
+			
+			return ResponseEntity.ok(output);
+			
+		// No filters - return all
+		} else {
+		    List<Product> found = service.findAll();
+		    List<ProductOutput> output = found.stream()
+		            .map(ProductMapper::toRepresentation)
+		            .toList();
+		    return ResponseEntity.ok(output);
+		}
 	}
 	
 	@GetMapping("/{id}")
-	@ResponseBody
-	public HttpEntity<Object> get(@PathVariable @NotNull(message = "O ID é obrigatório") @Positive(message = "O ID deve ser um número positivo") Long id) {
-		Product found = service.find(id);
-		ProductOutput output = ProductMapper.toRepresentation(found);
+	public HttpEntity<Object> get(@PathVariable Long id) {
+		Product domain = service.find(id);
+		
+		ProductOutput output = ProductMapper.toRepresentation(domain);
 		
 		return ResponseEntity.ok(output);
 	}

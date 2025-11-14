@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import unisul.estoque_backend.category.controller.representation.CategoryInput;
 import unisul.estoque_backend.category.controller.representation.CategoryOutput;
 import unisul.estoque_backend.category.controller.representation.EnumRepresentation;
@@ -33,7 +36,7 @@ public class CategoryController {
 	
 	@PostMapping
 	@ResponseBody
-	public HttpEntity<Object> create(@RequestBody CategoryInput input){
+	public HttpEntity<Object> create(@Valid @RequestBody CategoryInput input){
 		
 		Category domain = CategoryMapper.toDomain(input);
 		Category saved = service.create(domain);
@@ -56,7 +59,7 @@ public class CategoryController {
 	
 	@GetMapping("/{id}")
 	@ResponseBody
-	public HttpEntity<Object> get(@PathVariable Long id){
+	public HttpEntity<Object> get(@PathVariable @NotNull(message = "O ID é obrigatório") @Positive(message = "O ID deve ser um número positivo") Long id){
 		
 		Category found = service.find(id);
 		CategoryOutput output = CategoryMapper.toRepresentation(found);
@@ -84,7 +87,7 @@ public class CategoryController {
 	
 	@PutMapping
 	@ResponseBody
-	public HttpEntity<Object> update(@RequestParam Long id, @RequestBody CategoryInput input) {
+	public HttpEntity<Object> update(@RequestParam @NotNull(message = "O ID é obrigatório") @Positive(message = "O ID deve ser um número positivo") Long id, @Valid @RequestBody CategoryInput input) {
 		
 		input.setId(id);
 		
@@ -96,7 +99,7 @@ public class CategoryController {
 	}
 	
 	@DeleteMapping
-	public HttpEntity<Object> delete(@RequestParam Long id) {
+	public HttpEntity<Object> delete(@RequestParam @NotNull(message = "O ID é obrigatório") @Positive(message = "O ID deve ser um número positivo") Long id) {
 		if (service.delete(id)) {
 			return ResponseEntity.noContent().build();
 		} else {
