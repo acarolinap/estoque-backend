@@ -23,7 +23,7 @@ public class ProductMapper {
 		return domain;
 	}
 	
-	public static ProductEntity toEntity(Product domain, CategoryEntity category) {
+	public static ProductEntity toEntity(Product domain) {
 		ProductEntity entity = new ProductEntity();
 		
 		entity.setId(domain.getId());
@@ -33,8 +33,11 @@ public class ProductMapper {
 	    entity.setMaximumQuantity(domain.getMaximumQuantity());
 	    entity.setPrice(domain.getPrice());
 	    entity.setUnit(domain.getUnit());
-		
-	    entity.setCategory(category);
+	    
+	    CategoryEntity categoryEntity = new CategoryEntity();
+	    categoryEntity.setId(domain.getCategoryId());
+	    
+	    entity.setCategory(categoryEntity);
 	    
 	    return entity;
 	}
