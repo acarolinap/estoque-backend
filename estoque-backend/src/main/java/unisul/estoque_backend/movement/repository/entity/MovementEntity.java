@@ -2,6 +2,8 @@ package unisul.estoque_backend.movement.repository.entity;
 
 import java.time.Instant;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import unisul.estoque_backend.movement.domain.Movement;
 import unisul.estoque_backend.product.repository.entity.ProductEntity;
@@ -19,12 +22,16 @@ public class MovementEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@CreationTimestamp
 	@Column(nullable = false, updatable = false)
 	private Instant dateTime;
+	@Column(nullable = false, updatable = false)
 	private Integer quantity;
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, updatable = false)
 	private Movement.Type type;
 	@ManyToOne
+	@JoinColumn(nullable = false, updatable = false)
 	private ProductEntity productId;
 	
 	public MovementEntity() {
