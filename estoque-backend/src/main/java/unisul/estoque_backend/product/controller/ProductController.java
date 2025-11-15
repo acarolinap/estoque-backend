@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import unisul.estoque_backend.product.controller.representation.ProductInput;
 import unisul.estoque_backend.product.controller.representation.ProductOutput;
 import unisul.estoque_backend.product.domain.Product;
@@ -27,16 +31,16 @@ import unisul.estoque_backend.product.service.ProductService;
 @RestController
 @RequestMapping("/api/produtos")
 public class ProductController {
-	
+
 	@Autowired
 	private ProductService service;
-
+	
 	@PostMapping
-	public HttpEntity<Object> create(@RequestBody @Valid ProductInput input) {
+	@ResponseBody
+	public HttpEntity<Object> create(@Valid @RequestBody ProductInput input) {
 		Product domain = ProductMapper.toDomain(input);
-		domain = service.create(domain);
-		
-		ProductOutput output = ProductMapper.toRepresentation(domain);
+		Product saved = service.create(domain);
+		ProductOutput output = ProductMapper.toRepresentation(saved);
 		
 		return ResponseEntity.ok(output);
 	}
@@ -87,24 +91,21 @@ public class ProductController {
 	}
 	
 	@PutMapping
-	public HttpEntity<Object> update(
-			@RequestParam Long id, 
-			@RequestBody @Valid ProductInput input
-			) {
-		
+	@ResponseBody
+	public HttpEntity<Object> update(@RequestParam @NotNull(message = "O ID é obrigatório") @Positive(message = "O ID deve ser um número positivo") Long id, @Valid @RequestBody ProductInput input) {
 		input.setId(id);
-		Product domain = ProductMapper.toDomain(input);
 		
-		domain = service.create(domain);
+		Product product = ProductMapper.toDomain(input);
+		Product updated = service.update(product);
+		ProductOutput output = ProductMapper.toRepresentation(updated);
 		
-		ProductOutput output = ProductMapper.toRepresentation(domain);
 		return ResponseEntity.ok(output);
 	}
 	
 	@DeleteMapping
-	public HttpEntity<Object> delete(@RequestParam Long id) {
-		
+	public HttpEntity<Object> delete(@RequestParam @NotNull(message = "O ID é obrigatório") @Positive(message = "O ID deve ser um número positivo") Long id) {
 		service.delete(id);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.noContent().build();
 	}
 }
+

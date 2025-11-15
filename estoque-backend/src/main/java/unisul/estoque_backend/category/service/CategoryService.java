@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import unisul.estoque_backend.category.domain.Category;
+import unisul.estoque_backend.category.exception.CategoryNotFoundException;
 import unisul.estoque_backend.category.repository.CategoryRepository;
 
 @Service
@@ -29,7 +30,14 @@ public class CategoryService {
 
 	@Transactional(readOnly = true)
 	public Category find(Long id) {
-		return repository.findById(id);
+		if (id == null || id <= 0) {
+			throw new IllegalArgumentException("O ID da categoria deve ser um número positivo");
+		}
+		try {
+			return repository.findById(id);
+		} catch (CategoryNotFoundException e) {
+			throw new CategoryNotFoundException(id);
+		}
 	}
 	
 	public List<Category.Size> getSizes(){
@@ -44,11 +52,28 @@ public class CategoryService {
 	
 	@Transactional
 	public Category update(Category category) {
+		if (category == null) {
+			throw new IllegalArgumentException("A categoria não pode ser nula");
+		}
+		if (category.getId() == null || category.getId() <= 0) {
+			throw new IllegalArgumentException("O ID da categoria é obrigatório para atualização");
+		}
+		
+		// Valida se a categoria existe antes de atualizar
+		find(category.getId());
+		
 		return repository.save(category);
 	}
 	
 	@Transactional
 	public boolean delete(Long id) {
+		if (id == null || id <= 0) {
+			throw new IllegalArgumentException("O ID da categoria deve ser um número positivo");
+		}
+		
+		// Valida se a categoria existe antes de deletar
+		find(id);
+		
 		repository.deleteById(id);
 		return true;
 	}
