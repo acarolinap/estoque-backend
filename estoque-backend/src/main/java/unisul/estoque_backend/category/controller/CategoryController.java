@@ -21,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import unisul.estoque_backend.category.controller.representation.CategoryInput;
 import unisul.estoque_backend.category.controller.representation.CategoryOutput;
-import unisul.estoque_backend.category.controller.representation.EnumRepresentation;
+import unisul.estoque_backend.category.controller.representation.CategoryEnumRepresentation;
 import unisul.estoque_backend.category.domain.Category;
 import unisul.estoque_backend.category.mapper.CategoryEnumMapper;
 import unisul.estoque_backend.category.mapper.CategoryMapper;
@@ -70,7 +70,7 @@ public class CategoryController {
 	@GetMapping("/tamanhos")
 	public HttpEntity<Object> getSizes(){
 		List<Category.Size> list = service.getSizes();
-		List<EnumRepresentation> output = list.stream()
+		List<CategoryEnumRepresentation> output = list.stream()
 				.map(CategoryEnumMapper::toRepresentation).toList();
 		
 		return ResponseEntity.ok(output);
@@ -79,7 +79,7 @@ public class CategoryController {
 	@GetMapping("/embalagens")
 	public HttpEntity<Object> getPackaging(){
 		List<Category.Packaging> list = service.getPackaging();
-		List<EnumRepresentation> output = list.stream()
+		List<CategoryEnumRepresentation> output = list.stream()
 				.map(CategoryEnumMapper::toRepresentation).toList();
 		
 		return ResponseEntity.ok(output);

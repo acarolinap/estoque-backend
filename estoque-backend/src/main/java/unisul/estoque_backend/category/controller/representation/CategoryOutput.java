@@ -4,8 +4,8 @@ public class CategoryOutput {
 
 	private Long id;
 	private String name;
-	private EnumRepresentation size;
-	private EnumRepresentation packaging;
+	private CategoryEnumRepresentation size;
+	private CategoryEnumRepresentation packaging;
 	
 	public Long getId() {
 		return id;
@@ -19,16 +19,16 @@ public class CategoryOutput {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public EnumRepresentation getSize() {
+	public CategoryEnumRepresentation getSize() {
 		return size;
 	}
-	public void setSize(EnumRepresentation size) {
+	public void setSize(CategoryEnumRepresentation size) {
 		this.size = size;
 	}
-	public EnumRepresentation getPackaging() {
+	public CategoryEnumRepresentation getPackaging() {
 		return packaging;
 	}
-	public void setPackaging(EnumRepresentation packaging) {
+	public void setPackaging(CategoryEnumRepresentation packaging) {
 		this.packaging = packaging;
 	}
 }
