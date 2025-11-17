@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import unisul.estoque_backend.movement.controller.representation.MovementEnumRepresentation;
 import unisul.estoque_backend.movement.controller.representation.MovementInput;
 import unisul.estoque_backend.movement.controller.representation.MovementOutput;
 import unisul.estoque_backend.movement.domain.Movement;
+import unisul.estoque_backend.movement.mapper.MovementEnumMapper;
 import unisul.estoque_backend.movement.mapper.MovementMapper;
 import unisul.estoque_backend.movement.service.MovementService;
 
@@ -47,6 +49,15 @@ public class MovementController {
 	public HttpEntity<Object> get(@PathVariable Long id) {
 		Movement found = service.find(id);
 		MovementOutput output = MovementMapper.toRepresentation(found);
+		
+		return ResponseEntity.ok(output);
+	}
+	
+	@GetMapping("/tipos")
+	public HttpEntity<Object> getTypes(){
+		List<Movement.Type> list = service.getTypes();
+		List<MovementEnumRepresentation> output = list.stream()
+				.map(MovementEnumMapper::toRepresentation).toList();
 		
 		return ResponseEntity.ok(output);
 	}
