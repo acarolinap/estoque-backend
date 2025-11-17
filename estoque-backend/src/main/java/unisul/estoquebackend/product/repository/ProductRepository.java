@@ -1,0 +1,70 @@
+package unisul.estoquebackend.product.repository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import unisul.estoquebackend.category.domain.Category;
+import unisul.estoquebackend.category.repository.entity.CategoryEntity;
+import unisul.estoquebackend.product.domain.Product;
+import unisul.estoquebackend.product.exception.ProductNotFoundException;
+import unisul.estoquebackend.product.mapper.ProductMapper;
+import unisul.estoquebackend.product.repository.entity.ProductEntity;
+import unisul.estoquebackend.product.repository.jpa.ProductRepositoryJpa;
+
+@Repository
+public class ProductRepository {
+
+	private final ProductRepositoryJpa jpa;
+	
+	public ProductRepository(ProductRepositoryJpa jpa) {
+		this.jpa = jpa;
+	}
+	
+	public Product save(Product product) {
+		ProductEntity entity = ProductMapper.toEntity(product);
+		entity = jpa.save(entity);
+		
+		product = ProductMapper.toDomain(entity);
+		
+		return product;
+	}
+	
+	public List<Product> findAll(){
+		List<ProductEntity> found = jpa.findAll();
+		
+		List<Product> list = found.stream()
+				.map(ProductMapper::toDomain).toList();
+		
+		return list;
+	}
+	
+	public Product findById(Long id) {
+		ProductEntity found = jpa.findById(id)
+				.orElseThrow(() -> new ProductNotFoundException(id));
+		
+		Product domain = ProductMapper.toDomain(found);
+		
+		return domain;
+	}
+	
+	public void deleteById(Long id) {
+		jpa.deleteById(id);
+	}
+
+	public List<Product> findByCategoryId(Long id) {
+		List<ProductEntity> found = jpa.findByCategoryId(id);
+		List<Product> list = found.stream()
+				.map(ProductMapper::toDomain).toList();
+		
+		return list;
+	}
+	
+		public List<Product> findByLowQuantity(){
+		List<ProductEntity> found = jpa.findByLowQuantity();
+		List<Product> list = found.stream()
+				.map(ProductMapper::toDomain).toList();
+		
+		return list;
+	}
+}
