@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unisul.estoquebackend.movement.domain.Movement;
+import unisul.estoquebackend.movement.exception.StockConflictException;
 import unisul.estoquebackend.movement.repository.MovementRepository;
+import unisul.estoquebackend.product.service.ProductService;
 
 @Service
 public class MovementService {
@@ -16,11 +18,32 @@ public class MovementService {
 	@Autowired
 	private MovementRepository repository;
 	
+	@Autowired
+	private ProductService productService;
+	
 	@Transactional
 	public Movement create(Movement movement) {
-		Movement saved = repository.save(movement);
+		Movement saved = null;
 		
-		return saved;
+		switch (movement.getType()) {
+		
+		case OUT:
+			Long productId = movement.getProductId();
+			Integer transactionQuantity = movement.getQuantity();
+			Integer productQuantity = productService.find(productId).getQuantity();
+			
+			if (transactionQuantity > productQuantity) throw new StockConflictException("Could not complete movement: Not enough quantity in stock"); // This should return HTTP 409
+			
+			saved = repository.save(movement);
+			return saved;
+			
+		case IN:
+			saved = repository.save(movement);
+			return saved;
+			
+		default:
+			throw new IllegalArgumentException("Unexpected movement type in MovementService.create");
+		}
 	}
 	
 	@Transactional(readOnly = true)
