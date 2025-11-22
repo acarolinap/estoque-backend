@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unisul.estoquebackend.movement.domain.Movement;
-import unisul.estoquebackend.movement.exception.StockConflictException;
 import unisul.estoquebackend.movement.repository.MovementRepository;
-import unisul.estoquebackend.product.service.ProductService;
+import unisul.estoquebackend.product.exception.QuantityConflictException;
+import unisul.estoquebackend.product.service.ProductMovementInterface;
 
 @Service
 public class MovementService {
@@ -19,7 +19,7 @@ public class MovementService {
 	private MovementRepository repository;
 	
 	@Autowired
-	private ProductService productService;
+	private ProductMovementInterface productMovementInterface;
 	
 	@Transactional
 	public Movement create(Movement movement) {
@@ -28,16 +28,14 @@ public class MovementService {
 		switch (movement.getType()) {
 		
 		case OUT:
-			Long productId = movement.getProductId();
-			Integer transactionQuantity = movement.getQuantity();
-			Integer productQuantity = productService.find(productId).getQuantity();
-			
-			if (transactionQuantity > productQuantity) throw new StockConflictException("Could not complete movement: Not enough quantity in stock"); // This should return HTTP 409
+			productMovementInterface.removeQuantity(movement.getProductId(), movement.getQuantity());
 			
 			saved = repository.save(movement);
 			return saved;
 			
 		case IN:
+			productMovementInterface.addQuantity(movement.getProductId(), movement.getQuantity());
+			
 			saved = repository.save(movement);
 			return saved;
 			

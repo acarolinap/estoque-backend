@@ -1,7 +1,7 @@
 package unisul.estoquebackend.product.domain;
 
-import unisul.estoquebackend.category.domain.Category;
 import unisul.estoquebackend.product.exception.InvalidStockException;
+import unisul.estoquebackend.product.exception.QuantityConflictException;
 
 public class Product {
 
@@ -33,6 +33,26 @@ public class Product {
 		validateStockLimits();
 	}
 
+	public void addQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantidade deve ser um número positivo");
+		}
+		
+		this.quantity += quantity;
+	}
+	
+	public void removeQuantity(int quantity) {
+		if (quantity < 0) {
+			throw new IllegalArgumentException("Quantidade deve ser um número positivo");
+		}
+		
+		if (quantity > this.quantity) {
+			throw new QuantityConflictException("Sem quantidade suficiente para retirar. Quantidade atual: "+ this.quantity);
+		}
+		
+		this.quantity -= quantity;
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -140,9 +160,15 @@ public class Product {
 		}
 		// Validações de quantidade vs limites só fazem sentido se os limites estiverem definidos
 		// e a quantidade também estiver definida
+		
+		// Não faz sentido proibir quantidades abaixo da quantidade mínima, ou então a função de alertar estoque baixo seria redundante
+		// Trecho de código desativado
+		/*
 		if (minimumQuantity != null && quantity != null && quantity < minimumQuantity) {
 			throw new InvalidStockException("A quantidade atual não pode ser menor que a quantidade mínima");
 		}
+		*/
+		
 		if (maximumQuantity != null && quantity != null && quantity > maximumQuantity) {
 			throw new InvalidStockException("A quantidade atual não pode ser maior que a quantidade máxima");
 		}

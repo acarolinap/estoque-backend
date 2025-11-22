@@ -13,7 +13,7 @@ import unisul.estoquebackend.product.exception.ProductNotFoundException;
 import unisul.estoquebackend.product.repository.ProductRepository;
 
 @Service
-public class ProductService {
+public class ProductService implements ProductMovementInterface {
 
 	@Autowired
 	private ProductRepository repository;
@@ -101,5 +101,23 @@ public class ProductService {
 		find(id);
 		
 		repository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public void addQuantity(Long productId, int quantity) {
+		Product product = repository.findById(productId);
+		
+		product.addQuantity(quantity);
+		repository.save(product);
+	}
+
+	@Override
+	@Transactional
+	public void removeQuantity(Long productId, int quantity) {
+		Product product = repository.findById(productId);
+		
+		product.removeQuantity(quantity);
+		repository.save(product);
 	}
 }
